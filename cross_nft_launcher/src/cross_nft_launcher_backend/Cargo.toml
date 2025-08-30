@@ -1,0 +1,34 @@
+[package]
+name = "cross_nft_launcher_backend"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+candid = "0.10"
+ic-cdk = "0.12"
+ic-cdk-timers = "0.6" # Feel free to remove this dependency if you don't need timers
+serde = { version = "1.0", features = ["derive"] }
+bs58 = "0.4"
+serde_json = "1.0"
+once_cell = "1.19"
+ic-stable-structures = "0.6"
+ic-ledger-types = "0.13"
+ic-ethereum-types = { git = "https://github.com/dfinity/ic", tag = "release-2024-06-26_23-01-base", package = "ic-ethereum-types" }
+sha2 = "0.10"
+hex = "0.4"
+k256 = { version = "0.13.4", features = ["ecdsa"] }
+num-bigint = "0.4"
+num-traits = "0.2"
+time = "0.3"
+ciborium = "0.2"
+base64 = "0.21"
+ethabi = "18.0"
+ethers-core = "2.0.1"
+sha3 = "0.10.1"
+serde_bytes = "0.11"
+getrandom = { version = "0.2", features = ["custom"] }

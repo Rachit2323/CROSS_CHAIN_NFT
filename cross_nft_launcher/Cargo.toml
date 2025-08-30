@@ -1,0 +1,5 @@
+[workspace]
+members = [
+    "src/cross_nft_launcher_backend"
+]
+resolver = "2"

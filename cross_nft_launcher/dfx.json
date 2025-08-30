@@ -1,0 +1,37 @@
+{
+  "canisters": {
+    "cross_nft_launcher_backend": {
+      "candid": "src/cross_nft_launcher_backend/cross_nft_launcher_backend.did",
+      "package": "cross_nft_launcher_backend",
+      "type": "rust"
+    },
+    "evm_rpc": {
+      "type": "pull",
+      "id": "7hfb6-caaaa-aaaar-qadga-cai"
+    },
+    "cross_nft_launcher_frontend": {
+      "dependencies": [
+        "cross_nft_launcher_backend"
+      ],
+      "source": [
+        "src/cross_nft_launcher_frontend/build"
+      ],
+      "type": "assets",
+      "workspace": "cross_nft_launcher_frontend"
+    }
+  },
+  "defaults": {
+    "build": {
+      "args": "",
+      "packtool": ""
+    }
+  },
+  "networks": {
+    "local": {
+      "bind": "127.0.0.1:4943",
+      "type": "ephemeral"
+    }
+  },
+  "output_env_file": ".env",
+  "version": 1
+}

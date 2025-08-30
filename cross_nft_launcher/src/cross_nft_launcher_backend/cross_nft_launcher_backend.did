@@ -1,0 +1,22 @@
+type Account = record { owner : principal; subaccount : opt blob };
+type MetadataValue = variant { Int : int; Nat : nat; Blob : blob; Text : text };
+type MintArgs = record {
+  to : Account;
+  token_id : nat;
+  metadata : vec record { text; MetadataValue };
+  memo : opt blob;
+  created_at_time : opt nat64;
+};
+type Result = variant { Ok : text; Err : text };
+type Result_1 = variant { Ok : nat; Err : text };
+service : {
+  evm_monitor : () -> ();
+  generate_key_pair_evm : () -> (Result);
+  greet : (text) -> (text) query;
+  holesky_txn : () -> (Result);
+  icrc7_mint : (vec MintArgs) -> (vec Result_1);
+  monitor_evm_nft : () -> ();
+  monitor_evm_nft_reverse : () -> ();
+  sepolia_txn : () -> (Result);
+  update_block_number : (nat64) -> (Result);
+}
