@@ -96,7 +96,6 @@ impl ChainService {
         }
     }
 
- 
     pub async fn fetch_burn_logs(
         &self,
         from_block: u64,
@@ -138,11 +137,12 @@ impl ChainService {
             chainId: 11155111, // Sepolia testnet chain id
             services: vec![
                 RpcApi {
-                    url: "https://ethereum-sepolia-rpc.publicnode.com".to_string(),  // Primary: Most reliable
+                    url: "https://ethereum-sepolia-rpc.publicnode.com".to_string(), // Primary: Most reliable
                     headers: None,
                 },
                 RpcApi {
-                    url: "https://sepolia.infura.io/v3/5149c676c7f9427eb71d094efdb9788b".to_string(),  // Backup: Infura
+                    url: "https://sepolia.infura.io/v3/5149c676c7f9427eb71d094efdb9788b"
+                        .to_string(), // Backup: Infura
                     headers: None,
                 },
             ],
@@ -397,11 +397,12 @@ impl ChainService {
             chainId: 17000, // Holesky testnet chain id
             services: vec![
                 RpcApi {
-                    url: "https://eth-holesky.g.alchemy.com/v2/OLoCeG14N_MLxJ5tFvD-k67DHU4Xc-ig".to_string(),  // Primary: Alchemy
+                    url: "https://eth-holesky.g.alchemy.com/v2/OLoCeG14N_MLxJ5tFvD-k67DHU4Xc-ig"
+                        .to_string(), // Primary: Alchemy
                     headers: None,
                 },
                 RpcApi {
-                    url: "https://holesky.drpc.org".to_string(),  // Backup: DRPC
+                    url: "https://holesky.drpc.org".to_string(), // Backup: DRPC
                     headers: None,
                 },
             ],
@@ -475,27 +476,23 @@ impl ChainService {
                 ic_cdk::println!("  Timestamp: {}", timestamp);
 
                 // For reverse flow, we need to release NFT on Sepolia
-                ic_cdk::println!("🔥 Attempting to release NFT on Sepolia from Holesky burn event...");
+                ic_cdk::println!(
+                    "🔥 Attempting to release NFT on Sepolia from Holesky burn event..."
+                );
 
                 // Call mint_nft_release on Sepolia contract
                 match self
-                    .call_mint_nft_release_sepolia(
-                        owner.clone(),
-                        name,
-                        description,
-                        image,
-                        price,
-                    )
+                    .call_mint_nft_release_sepolia(owner.clone(), name, description, image, price)
                     .await
                 {
                     Ok(sol_token_id) => {
-                        ic_cdk::println!("✅ Called mint_nft_release on Sepolia successfully, token ID: {}", sol_token_id);
+                        ic_cdk::println!(
+                            "✅ Called mint_nft_release on Sepolia successfully, token ID: {}",
+                            sol_token_id
+                        );
                     }
                     Err(err) => {
-                        ic_cdk::println!(
-                            "❌ Failed to call mint_nft_release on Sepolia: {}",
-                            err
-                        );
+                        ic_cdk::println!("❌ Failed to call mint_nft_release on Sepolia: {}", err);
                     }
                 }
 
@@ -522,7 +519,6 @@ impl ChainService {
 
         Ok(burn_log_summaries)
     }
-
 
     /// Decode the full expanded `NftBurned` event log given raw topics and data from an Ethereum log
     fn decode_nft_burn_event_from_log(
@@ -641,38 +637,30 @@ impl ChainService {
         ))
     }
 
-   
-
-
     pub fn start_periodic_fetch(&self) {
         let service_clone = self.clone();
-    
+
         // Just run once immediately, no interval
         ic_cdk::spawn(async move {
             service_clone.fetch_logs_and_update_time().await;
         });
-    
+
         // No timer_id needed anymore
         *self.timer_id.borrow_mut() = None;
     }
 
-
     pub fn start_periodic_fetch_reverse(&self) {
         let service_clone = self.clone();
-    
+
         // Just run once immediately, no interval
         ic_cdk::spawn(async move {
             ic_cdk::println!("start_periodic_fetch_reverse");
             service_clone.fetch_logs_and_update_time_reverse().await;
         });
-    
+
         // No timer_id needed anymore
         *self.timer_id.borrow_mut() = None;
     }
-    
-    
-
-
 
     pub async fn fetch_logs_and_update_time(&self) {
         ic_cdk::println!("start_monitoring.");
@@ -688,11 +676,12 @@ impl ChainService {
             chainId: 11155111,
             services: vec![
                 RpcApi {
-                    url: "https://ethereum-sepolia-rpc.publicnode.com".to_string(),  // Primary: Most reliable
+                    url: "https://ethereum-sepolia-rpc.publicnode.com".to_string(), // Primary: Most reliable
                     headers: None,
                 },
                 RpcApi {
-                    url: "https://sepolia.infura.io/v3/5149c676c7f9427eb71d094efdb9788b".to_string(),  // Backup: Infura
+                    url: "https://sepolia.infura.io/v3/5149c676c7f9427eb71d094efdb9788b"
+                        .to_string(), // Backup: Infura
                     headers: None,
                 },
             ],
@@ -739,13 +728,13 @@ impl ChainService {
             from_block
         );
 
-        let to_block=from_block+99;  // Reduced range for better RPC compatibility
-        // let to_block = if highest_block_number > (from_block + 499) {
-        //     from_block + 499
-        // } else {
-        //     highest_block_number
-        // };
-       
+        let to_block = from_block + 99; // Reduced range for better RPC compatibility
+                                        // let to_block = if highest_block_number > (from_block + 499) {
+                                        //     from_block + 499
+                                        // } else {
+                                        //     highest_block_number
+                                        // };
+
         // 8841826 > 8842202
         ic_cdk::println!(
             "Fetching logs from_block: {}, to_block: {}",
@@ -786,11 +775,12 @@ impl ChainService {
             chainId: 17000, // Holesky chain ID
             services: vec![
                 RpcApi {
-                    url: "https://eth-holesky.g.alchemy.com/v2/OLoCeG14N_MLxJ5tFvD-k67DHU4Xc-ig".to_string(),  // Primary: Alchemy
+                    url: "https://eth-holesky.g.alchemy.com/v2/OLoCeG14N_MLxJ5tFvD-k67DHU4Xc-ig"
+                        .to_string(), // Primary: Alchemy
                     headers: None,
                 },
                 RpcApi {
-                    url: "https://holesky.drpc.org".to_string(),  // Backup: DRPC
+                    url: "https://holesky.drpc.org".to_string(), // Backup: DRPC
                     headers: None,
                 },
             ],
@@ -837,13 +827,13 @@ impl ChainService {
             from_block
         );
 
-        let to_block=from_block + 7;
+        let to_block = from_block + 7;
         // let to_block = if highest_block_number > (from_block + 499) {
         //     from_block + 499
         // } else {
         //     highest_block_number
         // };
-       
+
         ic_cdk::println!(
             "Fetching logs from_block: {}, to_block: {}",
             from_block,
@@ -854,13 +844,7 @@ impl ChainService {
             *block_num.borrow_mut() = to_block;
         });
 
-        if let Err(e) = self
-            .fetch_burn_logs_reverse(
-                from_block,
-                to_block,
-            )
-            .await
-        {
+        if let Err(e) = self.fetch_burn_logs_reverse(from_block, to_block).await {
             ic_cdk::println!("Error fetching logs: {}", e);
             return;
         }
@@ -868,7 +852,6 @@ impl ChainService {
         ic_cdk::println!("✅ fetch_logs_reverse completed successfully");
     }
 
-  
     pub fn nat_to_u64(nat: Nat) -> u64 {
         use num_traits::cast::ToPrimitive;
         nat.0
@@ -901,8 +884,6 @@ impl ChainService {
     }
 }
 
-
-
 #[update]
 pub fn update_block_number(new_block_num: u64) -> Result<String, String> {
     ic_cdk::println!("Updating block number to {}", new_block_num);
@@ -911,7 +892,6 @@ pub fn update_block_number(new_block_num: u64) -> Result<String, String> {
     });
     Ok(format!("BLOCK_NUMBER updated to {}", new_block_num))
 }
-
 
 // #[derive(CandidType, Deserialize, Serialize)]
 // struct StableState {
@@ -956,5 +936,3 @@ pub fn update_block_number(new_block_num: u64) -> Result<String, String> {
 //         }
 //     }
 // }
-
-

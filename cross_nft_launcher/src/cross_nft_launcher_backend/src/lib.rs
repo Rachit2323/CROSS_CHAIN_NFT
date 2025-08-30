@@ -1,18 +1,16 @@
-use std::collections::{HashMap, BTreeMap};
-use std::cell::RefCell;
-use std::time::Duration;
-use candid::{CandidType, Deserialize, Principal, Nat};
-use ic_cdk::api::{time, caller, id};
-use ic_cdk::{query, update, init, export_candid};
-use serde::Serialize;
 use crate::evm_nft_indexer::{ChainService, CHAIN_SERVICE};
-
+use candid::{CandidType, Deserialize, Nat, Principal};
+use ic_cdk::api::{caller, id, time};
+use ic_cdk::{export_candid, init, query, update};
+use serde::Serialize;
+use std::cell::RefCell;
+use std::collections::{BTreeMap, HashMap};
+use std::time::Duration;
 
 mod release_nft;
 
-mod evm_rpc_bindings;
 mod evm_nft_indexer;
-
+mod evm_rpc_bindings;
 
 #[ic_cdk::update]
 pub async fn evm_monitor() {
@@ -22,7 +20,10 @@ pub async fn evm_monitor() {
     CHAIN_SERVICE.with(|cs| {
         *cs.borrow_mut() = Some(ChainService::new("7hfb6-caaaa-aaaar-qadga-cai".to_string()));
     });
-    ic_cdk::println!("CHAIN_SERVICE: {:?}", CHAIN_SERVICE.with(|cs| cs.borrow().clone()));
+    ic_cdk::println!(
+        "CHAIN_SERVICE: {:?}",
+        CHAIN_SERVICE.with(|cs| cs.borrow().clone())
+    );
     // Start automatic monitoring
 
     ic_cdk::println!("Canister initialization complete");
@@ -54,16 +55,14 @@ pub async fn monitor_evm_nft_reverse() {
 }
 
 #[ic_cdk::update]
-pub async fn holesky_txn()->Result<String,String>{
+pub async fn holesky_txn() -> Result<String, String> {
     release_nft::holesky_txn().await
 }
 
 #[ic_cdk::update]
-pub async fn sepolia_txn()->Result<String,String>{
+pub async fn sepolia_txn() -> Result<String, String> {
     release_nft::sepolia_txn().await
 }
-
-
 
 #[derive(CandidType, Deserialize, Clone, Debug, Serialize)]
 pub enum Value {
@@ -171,9 +170,6 @@ pub struct ApprovalArgs {
     pub created_at_time: Option<u64>,
 }
 
-
-
-
 // ICRC-3 Transaction Types
 #[derive(CandidType, Deserialize, Clone, Debug, Serialize)]
 pub struct Transaction {
@@ -182,9 +178,6 @@ pub struct Transaction {
     pub transaction_type: TransactionType,
     pub memo: Option<Vec<u8>>,
 }
-
-
-
 
 // Global state using RefCell for simplicity
 thread_local! {
@@ -195,20 +188,12 @@ thread_local! {
     static TRANSACTIONS: RefCell<HashMap<String, Transaction>> = RefCell::new(HashMap::new());
 
     static TRANSACTION_COUNTER: RefCell<u64> = RefCell::new(0);
- 
+
 }
-
-
-
-
-
 
 #[update]
 async fn icrc7_mint(args: Vec<MintArgs>) -> Vec<Result<Nat, String>> {
-
     let current_time = time();
-   
-
 
     ic_cdk::println!("Minting NFTs {:?}", args);
     let mut results = Vec::new();
@@ -220,10 +205,24 @@ async fn icrc7_mint(args: Vec<MintArgs>) -> Vec<Result<Nat, String>> {
 
 #[derive(CandidType, Deserialize, Clone, Debug, Serialize)]
 pub enum TransactionType {
-    Mint { to: Account, token_id: Nat },
-    Transfer { from: Account, to: Account, token_id: Nat },
-    Approve { from: Account, spender: Account, token_id: Nat },
-    Burn { from: Account, token_id: Nat },
+    Mint {
+        to: Account,
+        token_id: Nat,
+    },
+    Transfer {
+        from: Account,
+        to: Account,
+        token_id: Nat,
+    },
+    Approve {
+        from: Account,
+        spender: Account,
+        token_id: Nat,
+    },
+    Burn {
+        from: Account,
+        token_id: Nat,
+    },
 }
 
 #[derive(CandidType, Deserialize, Clone, Debug)]
@@ -236,16 +235,12 @@ pub struct MintArgs {
 }
 
 async fn process_mint(current_time: u64, args: MintArgs) -> Result<Nat, String> {
-   
-
     let token_id = args.token_id;
-    let metadata: Vec<(String, Value)> = args.metadata
+    let metadata: Vec<(String, Value)> = args
+        .metadata
         .into_iter()
         .map(|(key, value)| (key, Value::from(value)))
         .collect();
-
-   
-  
 
     let token = Token {
         token_id: token_id.clone(),
@@ -271,26 +266,25 @@ async fn process_mint(current_time: u64, args: MintArgs) -> Result<Nat, String> 
     Ok(token_id)
 }
 
-
-
-
 fn record_transaction(transaction_type: TransactionType, memo: Option<Vec<u8>>) -> Nat {
     TRANSACTION_COUNTER.with(|counter| {
         let mut counter = counter.borrow_mut();
         *counter += 1;
         let transaction_id = Nat::from(*counter);
-        
+
         let transaction = Transaction {
             index: transaction_id.clone(),
             timestamp: time(),
             transaction_type,
             memo,
         };
-        
+
         TRANSACTIONS.with(|transactions| {
-            transactions.borrow_mut().insert(counter.to_string(), transaction);
+            transactions
+                .borrow_mut()
+                .insert(counter.to_string(), transaction);
         });
-        
+
         transaction_id
     })
 }
@@ -298,8 +292,10 @@ fn record_transaction(transaction_type: TransactionType, memo: Option<Vec<u8>>) 
 // Simple greeting function (keeping your original function)
 #[query]
 fn greet(name: String) -> String {
-    format!("Hello, {}! Welcome to the Cross NFT Launcher with ICRC-7 and ICRC-37 support!", name)
+    format!(
+        "Hello, {}! Welcome to the Cross NFT Launcher with ICRC-7 and ICRC-37 support!",
+        name
+    )
 }
-
 
 export_candid!();
