@@ -280,13 +280,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details.
 
-## 📞 Support
 
-- **Discord**: [Join our community](https://discord.gg/crosschain-nft)
-- **Twitter**: [@CrossChainNFT](https://twitter.com/crosschainnft)
-- **Email**: support@crosschainnft.io
-
----
 
 **Built with ❤️ using Internet Computer Protocol and the power of decentralized cross-chain technology.**
 
